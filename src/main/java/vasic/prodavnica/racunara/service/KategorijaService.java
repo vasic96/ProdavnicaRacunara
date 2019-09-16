@@ -6,6 +6,7 @@ import vasic.prodavnica.racunara.model.Kategorija;
 import vasic.prodavnica.racunara.repository.KategorijaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class KategorijaService {
@@ -17,8 +18,8 @@ public class KategorijaService {
         return kategorijaRepository.findAll();
     }
 
-    public Kategorija getOneById(int id) {
-        return kategorijaRepository.getOne(id);
+    public Optional<Kategorija> getOneById(int id) {
+        return kategorijaRepository.findById(id);
     }
 
     public Kategorija save(Kategorija kategorija) {
