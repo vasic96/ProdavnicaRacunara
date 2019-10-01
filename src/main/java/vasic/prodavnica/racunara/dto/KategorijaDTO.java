@@ -21,7 +21,7 @@ public class KategorijaDTO {
         this.id = kategorija.getId();
         this.naziv = kategorija.getNaziv();
         this.opis = kategorija.getOpis();
-        this.podkategorijaId = kategorija.getPodkategorija() == null ? 0 : kategorija.getPodkategorija().getId();
+        this.podkategorijaId = !kategorija.getParent().isPresent() ? 0 : kategorija.getParent().get().getId();
     }
 
     public int getId() {

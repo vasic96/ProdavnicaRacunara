@@ -6,4 +6,6 @@ import vasic.prodavnica.racunara.model.Kategorija;
 
 @Repository
 public interface KategorijaRepository extends JpaRepository<Kategorija, Integer> {
+
+    boolean existsKategorijaByParentId(int id);
 }

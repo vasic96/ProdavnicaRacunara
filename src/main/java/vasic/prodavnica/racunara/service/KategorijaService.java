@@ -35,5 +35,9 @@ public class KategorijaService {
         return kategorijaRepository.existsById(id);
     }
 
+    public boolean existByPodkategorijaId(int id) {
+        return kategorijaRepository.existsKategorijaByParentId(id);
+    }
+
 
 }

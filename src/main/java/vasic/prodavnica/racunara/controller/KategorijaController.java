@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vasic.prodavnica.racunara.dto.KategorijaDTO;
 import vasic.prodavnica.racunara.exceptions.EntityNotFoundException;
+import vasic.prodavnica.racunara.exceptions.ParentNotExistException;
 import vasic.prodavnica.racunara.model.Kategorija;
 import vasic.prodavnica.racunara.service.KategorijaService;
 
@@ -29,6 +30,21 @@ public class KategorijaController {
         return new ResponseEntity<List<KategorijaDTO>>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping("/kategorije/{id}/parent")
+    public ResponseEntity<KategorijaDTO> getParent(@PathVariable Integer id) {
+        Kategorija kategorija = kategorijaService.getOneById(id).orElseThrow(() -> new EntityNotFoundException(Kategorija.class.getName(), id));
+        KategorijaDTO parentDTO = kategorija.getParent().map(KategorijaDTO::new).orElseThrow(ParentNotExistException::new);
+        return new ResponseEntity<KategorijaDTO>(parentDTO, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/kategorije/{id}/childCategories")
+    public ResponseEntity<List<KategorijaDTO>> getAllChildCategories(@PathVariable Integer id) {
+        Kategorija kategorija = kategorijaService.getOneById(id).orElseThrow(() -> new EntityNotFoundException(Kategorija.class.getName(), id));
+        List<KategorijaDTO> dtos = kategorija.getChildCategories().stream().map(KategorijaDTO::new).collect(Collectors.toList());
+        return new ResponseEntity<List<KategorijaDTO>>(dtos, HttpStatus.OK);
+    }
+
     @GetMapping("/kategorije/{id}")
     public ResponseEntity<KategorijaDTO> getById(@PathVariable Integer id) {
 
@@ -46,7 +62,7 @@ public class KategorijaController {
         kategorija.setNaziv(kategorijaDTO.getNaziv());
         kategorija.setOpis(kategorijaDTO.getOpis());
 
-        kategorija.setPodkategorija(kategorijaDTO.getPodkategorijaId() < 1
+        kategorija.setParent(kategorijaDTO.getPodkategorijaId() < 1
                 ? null : kategorijaService.getOneById(kategorijaDTO.getPodkategorijaId()).orElseThrow(
                 () -> new EntityNotFoundException(Kategorija.class.getName(), kategorijaDTO.getPodkategorijaId())
         ));
@@ -57,8 +73,12 @@ public class KategorijaController {
     @DeleteMapping("/kategorije/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
 
-        kategorijaService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (!kategorijaService.existByPodkategorijaId(id)) {
+            kategorijaService.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
     }
 

@@ -1,12 +1,8 @@
 package vasic.prodavnica.racunara.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Optional;
 
 @Entity(name="kategorija")
 public class Kategorija {
@@ -21,10 +17,14 @@ public class Kategorija {
 	
 	@Column(name="opis",nullable=false)
 	private String opis;
-	
-	@OneToOne
-	@JoinColumn(name="podkategorija_id",referencedColumnName="id")
-	private Kategorija podkategorija;
+
+	@ManyToOne
+	@JoinColumn(name = "parentId")
+	private Kategorija parent;
+
+
+	@OneToMany(mappedBy = "parent")
+	private List<Kategorija> childCategories;
 	
 	public Kategorija() {}
 	
@@ -46,13 +46,21 @@ public class Kategorija {
 	public void setOpis(String opis) {
 		this.opis = opis;
 	}
-	public Kategorija getPodkategorija() {
-		return podkategorija;
-	}
-	public void setPodkategorija(Kategorija podkategorija) {
-		this.podkategorija = podkategorija;
-	}
-	
-	
 
+	public Optional<Kategorija> getParent() {
+
+		return parent == null ? Optional.empty() : Optional.of(parent);
+	}
+
+	public void setParent(Kategorija parent) {
+		this.parent = parent;
+	}
+
+	public List<Kategorija> getChildCategories() {
+		return childCategories;
+	}
+
+	public void setChildCategories(List<Kategorija> childCategories) {
+		this.childCategories = childCategories;
+	}
 }
