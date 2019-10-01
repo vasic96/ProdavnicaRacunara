@@ -11,10 +11,13 @@ public class Uloga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    String name;
+    private String name;
 
     @OneToMany(mappedBy = "uloga",fetch = FetchType.LAZY,cascade = CascadeType.REFRESH)
     private List<KorisnikUloga> korisniciUloge = new ArrayList<>();
+
+    public Uloga() {
+    }
 
 
     public Integer getId() {
