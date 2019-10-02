@@ -12,7 +12,8 @@ public class Slika {
 
     private String fileName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id", name = "komponenta_id", nullable = false)
     private Komponenta komponenta;
 
 
@@ -30,5 +31,13 @@ public class Slika {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Komponenta getKomponenta() {
+        return komponenta;
+    }
+
+    public void setKomponenta(Komponenta komponenta) {
+        this.komponenta = komponenta;
     }
 }
